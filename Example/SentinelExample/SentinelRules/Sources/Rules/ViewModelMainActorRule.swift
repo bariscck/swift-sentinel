@@ -8,7 +8,7 @@ struct ViewModelMainActorRule: Rule {
 
     func validate(using scope: SentinelScope) -> [Violation] {
         expect(scope.classes().withNameEndingWith("ViewModel")) {
-            $0.hasAttribute(named: "MainActor")
+            $0.attributes.contains(where: { $0.annotation == .mainActor })
         }
     }
 }

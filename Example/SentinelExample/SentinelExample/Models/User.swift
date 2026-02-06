@@ -14,7 +14,6 @@ struct Product: Codable {
     var isAvailable: Bool
 }
 
-// This enum intentionally has no raw type to test enum rules
 enum AppError {
     case network(Error)
     case parsing(String)

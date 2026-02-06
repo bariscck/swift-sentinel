@@ -1,7 +1,7 @@
 import Foundation
 
-// VIOLATION: Public class not marked final
-public class NetworkService {
+// VIOLATION: Service class not marked final
+class NetworkService {
     var baseURL: URL! = nil // VIOLATION: Force unwrap
     private var session: URLSession
 
@@ -19,7 +19,7 @@ public class NetworkService {
 }
 
 // OK: Marked final
-public final class AuthService {
+final class AuthService {
     private let networkService: NetworkService
 
     init(networkService: NetworkService) {
@@ -28,18 +28,5 @@ public final class AuthService {
 
     func login(email: String, password: String) async throws -> Bool {
         return true
-    }
-}
-
-// VIOLATION: Public class not marked final
-public class CacheService {
-    private var cache: [String: Any] = [:]
-
-    func get(key: String) -> Any? {
-        cache[key]
-    }
-
-    func set(key: String, value: Any) {
-        cache[key] = value
     }
 }
