@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "Sentinel",
-    platforms: [.macOS(.v13)],
+    platforms: [.macOS(.v13), .iOS(.v16)],
     products: [
         .executable(name: "sentinel", targets: ["Sentinel"]),
         .library(name: "SentinelKit", targets: ["SentinelKit"]),

@@ -2,7 +2,7 @@
 # Rules are pure Swift files that implement the Rule protocol.
 
 rules:
-  - SentinelRules
+  - SentinelRules/Sources
 
 exclude:
   - SentinelExampleTests

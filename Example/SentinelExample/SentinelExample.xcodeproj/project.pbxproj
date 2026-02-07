@@ -113,6 +113,7 @@
 			);
 			name = SentinelExample;
 			packageProductDependencies = (
+				339473E12F36C001004926DB /* SentinelRules */,
 			);
 			productName = SentinelExample;
 			productReference = 339473A32F36AF4C004926DB /* SentinelExample.app */;
@@ -196,6 +197,9 @@
 			);
 			mainGroup = 3394739A2F36AF4C004926DB;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				339473E02F36C000004926DB /* XCLocalSwiftPackageReference "SentinelRules" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 339473A42F36AF4C004926DB /* Products */;
 			projectDirPath = "";
@@ -601,6 +605,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		339473E02F36C000004926DB /* XCLocalSwiftPackageReference "SentinelRules" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = SentinelRules;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		339473E12F36C001004926DB /* SentinelRules */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SentinelRules;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3394739B2F36AF4C004926DB /* Project object */;
 }
