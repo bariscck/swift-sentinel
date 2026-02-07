@@ -250,7 +250,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Reset SDK environment so swift run uses macOS SDK\nunset SDKROOT\nunset PLATFORM_DIR\nunset PLATFORM_NAME\nexport DEVELOPER_DIR=\"$(xcode-select -p)\"\n\n# Run Sentinel lint from project root\n# SRCROOT = .../Example/SentinelExample, Sentinel package is at ../..\nSENTINEL_PACKAGE_PATH=\"${SRCROOT}/../..\"\ncd \"$SRCROOT\"\nswift run --package-path \"$SENTINEL_PACKAGE_PATH\" sentinel lint --path \"$SRCROOT\" 2>&1\n";
+			shellScript = "# Reset SDK environment so swift run uses macOS SDK\nunset SDKROOT\nunset PLATFORM_DIR\nunset PLATFORM_NAME\nexport DEVELOPER_DIR=\"$(xcode-select -p)\"\n\n# Run Sentinel lint from project root\n# SRCROOT = .../Example/SentinelExample, Sentinel package is at ../..\nSENTINEL_PACKAGE_PATH=\"${SRCROOT}/../..\"\ncd \"$SRCROOT\"\nswift run --package-path \"$SENTINEL_PACKAGE_PATH\" sentinel lint --path \"$SRCROOT\" 2>&1\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

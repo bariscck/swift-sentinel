@@ -13,7 +13,8 @@
       "Bash(xcrun swift:*)",
       "Bash(ls:*)",
       "Bash(nm:*)",
-      "Bash(swiftc:*)"
+      "Bash(swiftc:*)",
+      "Bash(echo:*)"
     ]
   }
 }

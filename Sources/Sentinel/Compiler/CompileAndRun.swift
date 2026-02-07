@@ -66,14 +66,8 @@ struct CompileAndRun {
         // 5. Execute and forward output
         let exitCode = try execute(executable: executable)
 
-        // 6. Clean up temp directory (go up from .build/debug/SentinelRuleRunner to temp root)
-        let tempRoot = executable
-            .deletingLastPathComponent() // debug/
-            .deletingLastPathComponent() // .build/
-            .deletingLastPathComponent() // temp root
-        try? FileManager.default.removeItem(at: tempRoot)
-
-        // 7. Exit with same code
+        // 6. Exit with same code
+        // Note: cache directory is intentionally preserved for incremental builds.
         if exitCode != 0 {
             exit(exitCode)
         }
