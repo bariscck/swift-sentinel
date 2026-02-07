@@ -10,7 +10,10 @@
       "Bash(swift run:*)",
       "Bash(xcodebuild:*)",
       "Bash(swift:*)",
-      "Bash(xcrun swift:*)"
+      "Bash(xcrun swift:*)",
+      "Bash(ls:*)",
+      "Bash(nm:*)",
+      "Bash(swiftc:*)"
     ]
   }
 }

@@ -1,6 +1,5 @@
 import Foundation
 
-@MainActor
 class BaseViewModel {
     var isLoading: Bool = false
     var error: Error?

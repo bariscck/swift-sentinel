@@ -1,6 +1,6 @@
 import Foundation
 
-// VIOLATION: Missing @MainActor annotation
+// OK: Has @MainActor
 // VIOLATION: Does not inherit from BaseViewModel
 @MainActor
 class UserViewModel {

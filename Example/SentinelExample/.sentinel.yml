@@ -1,0 +1,9 @@
+# Sentinel Configuration
+# Rules are pure Swift files that implement the Rule protocol.
+
+rules:
+  - SentinelRules
+
+exclude:
+  - SentinelExampleTests
+  - SentinelExampleUITests

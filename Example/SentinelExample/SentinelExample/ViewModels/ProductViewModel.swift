@@ -1,6 +1,6 @@
 import Foundation
 
-// VIOLATION: Missing @MainActor annotation
+// OK: Has @MainActor
 // OK: Inherits from BaseViewModel
 @MainActor
 class ProductViewModel: BaseViewModel {
