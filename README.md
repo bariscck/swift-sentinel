@@ -19,13 +19,11 @@ power of the SwiftSyntax AST.
 ```swift
 import SentinelKit
 
-struct ViewModelMainActorRule: Rule {
-    let identifier = "viewmodel-main-actor"
-    let ruleDescription = "ViewModels should be annotated with @MainActor."
-    let severity: Severity = .error
-
+@SentinelRule(.error, id: "viewmodel-main-actor")
+struct ViewModelMainActorRule {
     func validate(using scope: SentinelScope) -> [Violation] {
-        expect(scope.classes().withNameEndingWith("ViewModel")) {
+        expect("ViewModels should be annotated with @MainActor.",
+               for: scope.classes().withNameEndingWith("ViewModel")) {
             $0.attributes.contains(where: { $0.annotation == .mainActor })
         }
     }
@@ -70,56 +68,45 @@ which pioneered the idea of writing Swift architectural tests as pure Swift code
 
 ## Quick Start
 
-Sentinel needs two things: your rule files and a `.sentinel.yml` that tells it where they are.
-
-**1.** Write a rule — a plain `.swift` file that imports `SentinelKit`:
+**1.** Write a rule anywhere in your project — a plain `.swift` file that imports `SentinelKit`:
 
 ```swift
 import SentinelKit
 
-struct ServiceFinalRule: Rule {
-    let identifier = "service-final"
-    let ruleDescription = "Service classes should be marked final."
-    let severity: Severity = .warning
-
+@SentinelRule(.warning, id: "service-final")
+struct ServiceFinalRule {
     func validate(using scope: SentinelScope) -> [Violation] {
-        expect(scope.classes().withNameEndingWith("Service")) {
+        expect("Service classes should be marked final.",
+               for: scope.classes().withNameEndingWith("Service")) {
             $0.isFinal
         }
     }
 }
 ```
 
-**2.** Add a `.sentinel.yml` to your project root and point `rules` to the directory
-containing your rule files:
-
-```yaml
-rules:
-  - MyRules       # any directory — Sentinel scans all .swift files inside
-
-exclude:
-  - Tests
-  - Generated
-```
-
-**3.** Run `sentinel lint`:
+**2.** Run `sentinel lint`:
 
 ```
 Sources/NetworkService.swift:4:1: warning: [service-final] Service classes should be marked final.
 Sentinel: Found 0 error(s), 1 warning(s), 0 info(s)
 ```
 
+That's it. Sentinel discovers your rules from paths configured in `.sentinel.yml`.
+
 ## Writing Rules
 
-Every rule implements the `Rule` protocol:
+Every rule is a struct annotated with `@SentinelRule`. The macro synthesizes `Rule` protocol
+conformance along with `identifier` and `severity` properties — you only write `validate`:
 
 ```swift
-public protocol Rule: Sendable {
-    var identifier: String { get }
-    var ruleDescription: String { get }
-    var severity: Severity { get }
-
-    func validate(using scope: SentinelScope) -> [Violation]
+@SentinelRule(.error, id: "viewmodel-main-actor")
+struct ViewModelMainActorRule {
+    func validate(using scope: SentinelScope) -> [Violation] {
+        expect("ViewModels should be annotated with @MainActor.",
+               for: scope.classes().withNameEndingWith("ViewModel")) {
+            $0.hasAttribute(named: "MainActor")
+        }
+    }
 }
 ```
 
@@ -138,15 +125,30 @@ predicate generates a violation automatically with file, line, and column inform
 
 ```swift
 func validate(using scope: SentinelScope) -> [Violation] {
-    expect(scope.classes().withNameEndingWith("ViewModel")) {
+    expect("ViewModels should be annotated with @MainActor.",
+           for: scope.classes().withNameEndingWith("ViewModel")) {
         $0.attributes.contains(where: { $0.annotation == .mainActor })
     }
 }
 ```
 
-### Using `violation(on:)`
+You can compose multiple `expect` calls for rules that check several conditions:
 
-For rules needing custom logic or messages, create violations manually:
+```swift
+func validate(using scope: SentinelScope) -> [Violation] {
+    let vms = scope.classes().withNameEndingWith("ViewModel")
+    return expect("ViewModels must inherit from BaseViewModel.", for: vms) {
+               $0.inherits(from: "BaseViewModel")
+           }
+         + expect("ViewModels must be annotated with @MainActor.", for: vms) {
+               $0.hasAttribute(named: "MainActor")
+           }
+}
+```
+
+### Using `violation(on:message:)`
+
+For rules needing custom logic, create violations manually:
 
 ```swift
 func validate(using scope: SentinelScope) -> [Violation] {
@@ -209,12 +211,14 @@ Declarations also expose computed properties: `isFinal`, `isPublic`, `isStatic`,
 
 ## Configuration
 
+Add a `.sentinel.yml` to your project root to configure rule paths, exclusions, and inclusions.
+
 ### `.sentinel.yml`
 
 ```yaml
-rules:
-  - SentinelRules/Sources       # directory of .swift rule files
-  - Rules/CustomRule.swift      # or individual files
+rules:                           # paths to rule files or directories
+  - SentinelRules/Sources        #   directory of .swift rule files
+  - Rules/CustomRule.swift       #   or individual files
 
 exclude:
   - Tests
@@ -326,7 +330,7 @@ Then create a target for your rules that depends on `SentinelKit`:
 ```
 
 Write your rules under `SentinelRules/Sources/` with `import SentinelKit`. Xcode will resolve
-all types — `Rule`, `SentinelScope`, `expect`, filters — with full autocompletion.
+all types — `Rule`, `SentinelScope`, `@SentinelRule`, `expect`, filters — with full autocompletion.
 
 Point `.sentinel.yml` to the same directory:
 
@@ -404,6 +408,9 @@ swift build
 ├─────────────────────────────────────────┤
 │  SentinelKit (Rule Framework)           │
 │  Rule protocol, expect DSL, Violation   │
+├─────────────────────────────────────────┤
+│  SentinelMacros (Compiler Plugin)       │
+│  @SentinelRule macro implementation     │
 ├─────────────────────────────────────────┤
 │  SentinelCore (Analysis Engine)         │
 │  SwiftSyntax parsing, declarations      │

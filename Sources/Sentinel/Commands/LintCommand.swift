@@ -4,7 +4,7 @@ import Foundation
 struct LintCommand: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "lint",
-        abstract: "Lint Swift source files using rules defined in .sentinel.yml."
+        abstract: "Lint Swift source files using @SentinelRule rules."
     )
 
     @Option(name: .shortAndLong, help: "Path to the config file.")
@@ -32,11 +32,6 @@ struct LintCommand: ParsableCommand {
             sentinelConfig = try ConfigParser.parse(at: configPath)
         } catch {
             print("Sentinel: \(error)")
-            throw ExitCode.failure
-        }
-
-        guard !sentinelConfig.rules.isEmpty else {
-            print("Sentinel: No rules defined in \(config). Add rule paths under 'rules:' key.")
             throw ExitCode.failure
         }
 

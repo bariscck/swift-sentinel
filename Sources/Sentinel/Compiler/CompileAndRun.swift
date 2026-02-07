@@ -5,16 +5,16 @@ import Foundation
 struct CompileAndRun {
 
     enum PipelineError: Error, CustomStringConvertible {
-        case noRuleFiles(String)
+        case noRuleFiles
         case noRuleTypes
         case executionFailed(Int32)
 
         var description: String {
             switch self {
-            case .noRuleFiles(let paths):
-                return "No Swift rule files found in paths: \(paths)"
+            case .noRuleFiles:
+                return "No rule files found. Specify paths under 'rules:' in .sentinel.yml."
             case .noRuleTypes:
-                return "No Rule-conforming types found in rule files. Ensure your rules implement the Rule protocol."
+                return "No Rule-conforming types found in rule files. Annotate your rules with @SentinelRule."
             case .executionFailed(let code):
                 return "Sentinel runner exited with code \(code)"
             }
@@ -34,11 +34,11 @@ struct CompileAndRun {
         projectPath: String,
         sentinelPackagePath: String
     ) throws {
-        // 1. Collect rule Swift files
+        // 1. Collect rule Swift files from configured paths
         let ruleFiles = collectRuleFiles(paths: config.rules, baseDir: configDir)
 
         guard !ruleFiles.isEmpty else {
-            throw PipelineError.noRuleFiles(config.rules.joined(separator: ", "))
+            throw PipelineError.noRuleFiles
         }
 
         // 2. Discover Rule-conforming types via SwiftSyntax

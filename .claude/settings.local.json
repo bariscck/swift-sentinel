@@ -14,7 +14,8 @@
       "Bash(ls:*)",
       "Bash(nm:*)",
       "Bash(swiftc:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(git stash:*)"
     ]
   }
 }

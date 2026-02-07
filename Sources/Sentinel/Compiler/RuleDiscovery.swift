@@ -25,21 +25,23 @@ struct RuleDiscovery {
         visitor.walk(tree)
         return visitor.ruleTypeNames
     }
+
 }
 
-/// SyntaxVisitor that finds struct/class declarations conforming to `Rule`.
+/// SyntaxVisitor that finds struct/class declarations conforming to `Rule`
+/// either via inheritance clause (`: Rule`) or `@SentinelRule` attribute.
 private final class RuleConformanceVisitor: SyntaxVisitor {
     var ruleTypeNames: [String] = []
 
     override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-        if conformsToRule(node.inheritanceClause) {
+        if conformsToRule(node.inheritanceClause) || hasSentinelRuleAttribute(node.attributes) {
             ruleTypeNames.append(node.name.text)
         }
         return .skipChildren
     }
 
     override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-        if conformsToRule(node.inheritanceClause) {
+        if conformsToRule(node.inheritanceClause) || hasSentinelRuleAttribute(node.attributes) {
             ruleTypeNames.append(node.name.text)
         }
         return .skipChildren
@@ -49,6 +51,13 @@ private final class RuleConformanceVisitor: SyntaxVisitor {
         guard let clause else { return false }
         return clause.inheritedTypes.contains { inherited in
             inherited.type.trimmedDescription == "Rule"
+        }
+    }
+
+    private func hasSentinelRuleAttribute(_ attributes: AttributeListSyntax) -> Bool {
+        attributes.contains { element in
+            guard case .attribute(let attr) = element else { return false }
+            return attr.attributeName.trimmedDescription == "SentinelRule"
         }
     }
 }

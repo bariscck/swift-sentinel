@@ -3,7 +3,6 @@ import Testing
 
 struct NoForceUnwrapRule: Rule {
     let identifier = "no-force-unwrap"
-    let ruleDescription = "Avoid force unwrapping optionals."
     let severity: Severity = .warning
 
     func validate(using scope: SentinelScope) -> [Violation] {
@@ -11,17 +10,17 @@ struct NoForceUnwrapRule: Rule {
             .filter { variable in
                 variable.typeAnnotation?.name.hasSuffix("!") == true
             }
-            .map { violation(on: $0) }
+            .map { violation(on: $0, message: "Variable '\($0.name)' uses implicitly unwrapped optional.") }
     }
 }
 
 struct PublicFinalClassRule: Rule {
     let identifier = "public-final-class"
-    let ruleDescription = "Public classes should be marked final unless designed for inheritance."
     let severity: Severity = .info
 
     func validate(using scope: SentinelScope) -> [Violation] {
-        expect(scope.classes().withPublicModifier()) {
+        expect("Public classes should be marked final unless designed for inheritance.",
+               for: scope.classes().withPublicModifier()) {
             $0.isFinal
         }
     }
@@ -84,13 +83,12 @@ struct PublicFinalClassRule: Rule {
 
     struct ViewModelRule: Rule {
         let identifier = "viewmodel-complete"
-        let ruleDescription = "ViewModels must inherit BaseViewModel and be @MainActor."
         let severity: Severity = .error
 
         func validate(using scope: SentinelScope) -> [Violation] {
             let vms = scope.classes().withNameEndingWith("ViewModel")
-            return expect(vms) { $0.inherits(from: "BaseViewModel") }
-                 + expect(vms) { $0.hasAttribute(named: "MainActor") }
+            return expect("ViewModels must inherit from BaseViewModel.", for: vms) { $0.inherits(from: "BaseViewModel") }
+                 + expect("ViewModels must be annotated with @MainActor.", for: vms) { $0.hasAttribute(named: "MainActor") }
         }
     }
 

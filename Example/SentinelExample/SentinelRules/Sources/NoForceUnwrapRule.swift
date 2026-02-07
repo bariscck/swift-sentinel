@@ -2,11 +2,8 @@ import SentinelKit
 
 /// Variables should not use implicitly unwrapped optionals (force unwrap).
 /// Use proper optionals or default values instead.
-struct NoForceUnwrapRule: Rule {
-    let identifier = "no-force-unwrap"
-    let ruleDescription = "Avoid implicitly unwrapped optionals."
-    let severity: Severity = .warning
-
+@SentinelRule(.warning, id: "no-force-unwrap")
+struct NoForceUnwrapRule {
     func validate(using scope: SentinelScope) -> [Violation] {
         scope.classes()
             .flatMap { $0.variables() }
