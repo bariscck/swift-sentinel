@@ -384,7 +384,7 @@ dependencies: [
 ### Building from Source
 
 ```bash
-git clone https://github.com/nicklama/sentinel.git
+git clone https://github.com/bariscck/sentinel.git
 cd sentinel
 swift build
 ```
