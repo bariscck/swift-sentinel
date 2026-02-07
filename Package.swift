@@ -1,5 +1,6 @@
 // swift-tools-version: 6.2
 import PackageDescription
+import CompilerPluginSupport
 
 let package = Package(
     name: "Sentinel",
@@ -22,9 +23,19 @@ let package = Package(
                 .product(name: "SwiftOperators", package: "swift-syntax"),
             ]
         ),
+        .macro(
+            name: "SentinelMacros",
+            dependencies: [
+                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+            ]
+        ),
         .target(
             name: "SentinelKit",
-            dependencies: ["SentinelCore"]
+            dependencies: [
+                "SentinelCore",
+                "SentinelMacros",
+            ]
         ),
         .executableTarget(
             name: "Sentinel",
@@ -42,6 +53,13 @@ let package = Package(
         .testTarget(
             name: "SentinelKitTests",
             dependencies: ["SentinelKit"]
+        ),
+        .testTarget(
+            name: "SentinelMacroTests",
+            dependencies: [
+                "SentinelMacros",
+                .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+            ]
         ),
         .testTarget(
             name: "SentinelTests",
