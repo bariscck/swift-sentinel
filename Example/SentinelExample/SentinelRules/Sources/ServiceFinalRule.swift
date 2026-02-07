@@ -8,7 +8,7 @@ struct ServiceFinalRule: Rule {
     let severity: Severity = .warning
 
     func validate(using scope: SentinelScope) -> [Violation] {
-        expect(scope.classes().withNameEndingWith("Service")) {
+        expect(for: scope.classes().withNameEndingWith("Service")) {
             $0.isFinal
         }
     }

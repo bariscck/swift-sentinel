@@ -5,8 +5,8 @@
 /// @SentinelRule(.warning, id: "service_final")
 /// struct ServiceFinalRule {
 ///     func validate(using scope: SentinelScope) -> [Violation] {
-///         expect(scope.classes().withNameEndingWith("Service"),
-///                message: "Service classes should be marked final.") {
+///         expect("Service classes should be marked final.",
+///                for: scope.classes().withNameEndingWith("Service")) {
 ///             $0.isFinal
 ///         }
 ///     }

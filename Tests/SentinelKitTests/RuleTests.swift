@@ -9,7 +9,7 @@ struct MainActorViewModelRule: Rule {
     let severity: Severity = .error
 
     func validate(using scope: SentinelScope) -> [Violation] {
-        expect(scope.classes().withNameEndingWith("ViewModel")) {
+        expect(for: scope.classes().withNameEndingWith("ViewModel")) {
             $0.hasAttribute(named: "MainActor")
         }
     }
@@ -21,7 +21,7 @@ struct ViewModelInheritanceRule: Rule {
     let severity: Severity = .warning
 
     func validate(using scope: SentinelScope) -> [Violation] {
-        expect(scope.classes().withNameEndingWith("ViewModel")) {
+        expect(for: scope.classes().withNameEndingWith("ViewModel")) {
             $0.inherits(from: "BaseViewModel")
         }
     }

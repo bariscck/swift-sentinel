@@ -7,7 +7,7 @@ struct ViewModelInheritanceRule: Rule {
     let severity: Severity = .warning
 
     func validate(using scope: SentinelScope) -> [Violation] {
-        expect(scope.classes().withNameEndingWith("ViewModel").filter({ $0.name != "BaseViewModel" })) {
+        expect(for: scope.classes().withNameEndingWith("ViewModel").filter({ $0.name != "BaseViewModel" })) {
             $0.inherits(from: "BaseViewModel")
         }
     }

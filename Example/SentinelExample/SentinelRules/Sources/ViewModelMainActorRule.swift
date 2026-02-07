@@ -7,7 +7,7 @@ struct ViewModelMainActorRule: Rule {
     let severity: Severity = .error
 
     func validate(using scope: SentinelScope) -> [Violation] {
-        expect(scope.classes().withNameEndingWith("ViewModel")) {
+        expect(for: scope.classes().withNameEndingWith("ViewModel")) {
             $0.attributes.contains(where: { $0.annotation == .mainActor })
         }
     }

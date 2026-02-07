@@ -21,7 +21,7 @@ struct PublicFinalClassRule: Rule {
     let severity: Severity = .info
 
     func validate(using scope: SentinelScope) -> [Violation] {
-        expect(scope.classes().withPublicModifier()) {
+        expect(for: scope.classes().withPublicModifier()) {
             $0.isFinal
         }
     }
@@ -89,8 +89,8 @@ struct PublicFinalClassRule: Rule {
 
         func validate(using scope: SentinelScope) -> [Violation] {
             let vms = scope.classes().withNameEndingWith("ViewModel")
-            return expect(vms) { $0.inherits(from: "BaseViewModel") }
-                 + expect(vms) { $0.hasAttribute(named: "MainActor") }
+            return expect(for: vms) { $0.inherits(from: "BaseViewModel") }
+                 + expect(for: vms) { $0.hasAttribute(named: "MainActor") }
         }
     }
 

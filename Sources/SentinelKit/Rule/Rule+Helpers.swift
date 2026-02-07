@@ -21,8 +21,8 @@ extension Rule {
 
     /// Shorthand expect: returns violations for declarations failing the predicate.
     public func expect<T: SourceCodeProviding & NamedDeclaration & SyntaxNodeProviding>(
-        _ declarations: [T],
-        message: String? = nil,
+        _ message: String? = nil,
+        for declarations: [T],
         _ predicate: (T) -> Bool
     ) -> [Violation] {
         declarations.compactMap { declaration in
