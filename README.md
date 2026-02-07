@@ -6,6 +6,11 @@
 [![macOS 13+](https://img.shields.io/badge/macOS-13%2B-blue.svg)](https://developer.apple.com/macos/)
 [![SwiftSyntax 602](https://img.shields.io/badge/SwiftSyntax-602-green.svg)](https://github.com/swiftlang/swift-syntax)
 
+> [!WARNING]
+> **Work in Progress** — Sentinel is under active development. APIs, CLI interface, and
+> integration patterns may change. It is not yet published as a release binary; see
+> [Current Limitations](#current-limitations) for details.
+
 ---
 
 Sentinel is a Swift linting tool that takes a fundamentally different approach: instead of
@@ -509,6 +514,31 @@ NetworkService.swift:4:1: warning: [service-final] Service classes should be mar
 DataFetcher.swift:4:1: note: [protocol-naming] Protocol 'DataFetcher' should end with a descriptive suffix.
 ```
 
+### Why `unset SDKROOT`?
+
+You might notice that tools like SwiftLint don't need these `unset` lines in their build phase
+scripts. The reason is how each tool is invoked:
+
+**SwiftLint** is distributed as a **pre-built macOS binary** (via Homebrew, Mint, or direct
+download). When you write `swiftlint` in a build phase, you're running a standalone executable
+that was already compiled for macOS. It doesn't need any SDK — it just runs.
+
+**Sentinel** currently runs via `swift run`, which means the Swift toolchain needs to **compile
+and link** the tool on the fly. The problem is that Xcode exports environment variables like
+`SDKROOT`, `PLATFORM_DIR`, and `PLATFORM_NAME` pointing to the target platform's SDK (e.g.
+iPhoneSimulator) during build. When `swift run` inherits these variables, it tries to compile
+Sentinel — a macOS command-line tool — using the iOS SDK, which fails.
+
+The `unset` lines clear these inherited variables so that `swift run` falls back to the default
+macOS SDK, which is what we need.
+
+> [!NOTE]
+> Once Sentinel is distributed as a pre-built binary (via Homebrew, Mint, or GitHub Releases),
+> the build phase script simplifies to a single line — no `unset`, no `swift run`:
+> ```bash
+> sentinel lint --path "$SRCROOT"
+> ```
+
 ## Testing Rules
 
 One of Sentinel's key advantages: rules are testable Swift code. Use `Sentinel.on(source:)` to
@@ -837,6 +867,35 @@ Sentinel is organized into three layers:
 
   - **Sentinel** — The CLI executable. Handles config parsing, rule file discovery, code
     generation, compilation (via temporary SPM packages), and execution.
+
+## Current Limitations
+
+Sentinel is under active development. Here's what to expect in the current state:
+
+  - **No pre-built binary yet.** Sentinel must be run via `swift run`, which requires the source
+    checkout and adds `unset SDKROOT` boilerplate in Xcode build phases. A Homebrew formula and
+    GitHub Release binaries are planned, which will eliminate this entirely.
+
+  - **First-run compilation overhead.** The very first `sentinel lint` invocation compiles a
+    temporary SPM package with all dependencies (SwiftSyntax, SentinelKit, etc.), which can take
+    15–30 seconds. Subsequent runs use content-hash based caching and complete in ~1 second when
+    rule files haven't changed.
+
+  - **macOS only.** Sentinel analyzes Swift source files on macOS. Linux support is technically
+    feasible (SwiftSyntax supports Linux) but is not tested or prioritized.
+
+  - **No SPM plugin integration.** Running Sentinel as a native SPM build tool plugin
+    (`swift package sentinel`) is not yet supported.
+
+## Roadmap
+
+  - [ ] Pre-built binary distribution (Homebrew, Mint, GitHub Releases)
+  - [ ] SPM Build Tool Plugin support
+  - [ ] `--fix` mode for auto-correctable rules
+  - [ ] Parallel rule execution
+  - [ ] Built-in rule library (common Swift/SwiftUI patterns)
+  - [ ] Rule severity override in `.sentinel.yml`
+  - [ ] Watch mode for continuous linting during development
 
 ## License
 
