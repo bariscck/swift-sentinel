@@ -1,9 +1,9 @@
-/// Automatically synthesizes `identifier`, `severity`, and `ruleDescription` properties for a `Rule` conforming type.
+/// Automatically synthesizes `Rule` conformance along with `identifier`, `severity`, and `ruleDescription` properties.
 ///
 /// Usage:
 /// ```swift
 /// @SentinelRule(.warning, id: "service_final")
-/// struct ServiceFinalRule: Rule {
+/// struct ServiceFinalRule {
 ///     func validate(using scope: SentinelScope) -> [Violation] {
 ///         expect(scope.classes().withNameEndingWith("Service"),
 ///                message: "Service classes should be marked final.") {
@@ -16,9 +16,10 @@
 /// You can also provide a custom description:
 /// ```swift
 /// @SentinelRule(.error, id: "viewmodel-main-actor", description: "ViewModels should be annotated with @MainActor.")
-/// struct ViewModelMainActorRule: Rule { ... }
+/// struct ViewModelMainActorRule { ... }
 /// ```
 @attached(member, names: named(identifier), named(severity), named(ruleDescription))
+@attached(extension, conformances: Rule)
 public macro SentinelRule(
     _ severity: Severity,
     id: String,

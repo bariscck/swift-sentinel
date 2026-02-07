@@ -2,7 +2,25 @@ import SwiftDiagnostics
 import SwiftSyntax
 import SwiftSyntaxMacros
 
-public struct SentinelRuleMacro: MemberMacro {
+public struct SentinelRuleMacro: MemberMacro, ExtensionMacro {
+
+    // MARK: - ExtensionMacro
+
+    public static func expansion(
+        of node: AttributeSyntax,
+        attachedTo declaration: some DeclGroupSyntax,
+        providingExtensionsOf type: some TypeSyntaxProtocol,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) throws -> [ExtensionDeclSyntax] {
+        guard !protocols.isEmpty else { return [] }
+
+        let ext: DeclSyntax = "extension \(type.trimmed): Rule {}"
+        return [ext.cast(ExtensionDeclSyntax.self)]
+    }
+
+    // MARK: - MemberMacro
+
     public static func expansion(
         of node: AttributeSyntax,
         providingMembersOf declaration: some DeclGroupSyntax,
