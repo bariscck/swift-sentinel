@@ -4,7 +4,7 @@ import Foundation
 struct LintCommand: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "lint",
-        abstract: "Lint Swift source files using rules defined in .sentinel.yml."
+        abstract: "Lint Swift source files using @SentinelRule rules."
     )
 
     @Option(name: .shortAndLong, help: "Path to the config file.")
@@ -26,18 +26,17 @@ struct LintCommand: ParsableCommand {
             configPath = (projectPath as NSString).appendingPathComponent(config)
         }
 
-        // Parse config
+        // Parse config — use defaults if file doesn't exist
         let sentinelConfig: SentinelConfig
-        do {
-            sentinelConfig = try ConfigParser.parse(at: configPath)
-        } catch {
-            print("Sentinel: \(error)")
-            throw ExitCode.failure
-        }
-
-        guard !sentinelConfig.rules.isEmpty else {
-            print("Sentinel: No rules defined in \(config). Add rule paths under 'rules:' key.")
-            throw ExitCode.failure
+        if FileManager.default.fileExists(atPath: configPath) {
+            do {
+                sentinelConfig = try ConfigParser.parse(at: configPath)
+            } catch {
+                print("Sentinel: \(error)")
+                throw ExitCode.failure
+            }
+        } else {
+            sentinelConfig = SentinelConfig()
         }
 
         // Resolve Sentinel package path

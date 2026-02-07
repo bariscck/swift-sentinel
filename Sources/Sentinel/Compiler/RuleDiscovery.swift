@@ -25,21 +25,57 @@ struct RuleDiscovery {
         visitor.walk(tree)
         return visitor.ruleTypeNames
     }
+
+    /// Scan a directory for Swift files containing `@SentinelRule`.
+    static func findRuleFiles(in directory: String, excluding: [String] = []) -> [URL] {
+        let fileManager = FileManager.default
+        let directoryURL = URL(fileURLWithPath: directory)
+
+        let skipDirs = Set(excluding + [".build", "DerivedData", ".git", "Pods", "Carthage"])
+
+        guard let enumerator = fileManager.enumerator(
+            at: directoryURL,
+            includingPropertiesForKeys: [.isRegularFileKey, .isDirectoryKey],
+            options: [.skipsHiddenFiles]
+        ) else {
+            return []
+        }
+
+        var ruleFiles: [URL] = []
+
+        for case let fileURL as URL in enumerator {
+            // Skip excluded directories
+            if skipDirs.contains(fileURL.lastPathComponent) {
+                enumerator.skipDescendants()
+                continue
+            }
+
+            guard fileURL.pathExtension == "swift" else { continue }
+
+            if let content = try? String(contentsOf: fileURL, encoding: .utf8),
+               content.contains("@SentinelRule") {
+                ruleFiles.append(fileURL)
+            }
+        }
+
+        return ruleFiles
+    }
 }
 
-/// SyntaxVisitor that finds struct/class declarations conforming to `Rule`.
+/// SyntaxVisitor that finds struct/class declarations conforming to `Rule`
+/// either via inheritance clause (`: Rule`) or `@SentinelRule` attribute.
 private final class RuleConformanceVisitor: SyntaxVisitor {
     var ruleTypeNames: [String] = []
 
     override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-        if conformsToRule(node.inheritanceClause) {
+        if conformsToRule(node.inheritanceClause) || hasSentinelRuleAttribute(node.attributes) {
             ruleTypeNames.append(node.name.text)
         }
         return .skipChildren
     }
 
     override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-        if conformsToRule(node.inheritanceClause) {
+        if conformsToRule(node.inheritanceClause) || hasSentinelRuleAttribute(node.attributes) {
             ruleTypeNames.append(node.name.text)
         }
         return .skipChildren
@@ -49,6 +85,13 @@ private final class RuleConformanceVisitor: SyntaxVisitor {
         guard let clause else { return false }
         return clause.inheritedTypes.contains { inherited in
             inherited.type.trimmedDescription == "Rule"
+        }
+    }
+
+    private func hasSentinelRuleAttribute(_ attributes: AttributeListSyntax) -> Bool {
+        attributes.contains { element in
+            guard case .attribute(let attr) = element else { return false }
+            return attr.attributeName.trimmedDescription == "SentinelRule"
         }
     }
 }

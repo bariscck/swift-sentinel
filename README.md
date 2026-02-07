@@ -68,9 +68,7 @@ which pioneered the idea of writing Swift architectural tests as pure Swift code
 
 ## Quick Start
 
-Sentinel needs two things: your rule files and a `.sentinel.yml` that tells it where they are.
-
-**1.** Write a rule — a plain `.swift` file that imports `SentinelKit`:
+**1.** Write a rule anywhere in your project — a plain `.swift` file that imports `SentinelKit`:
 
 ```swift
 import SentinelKit
@@ -86,24 +84,15 @@ struct ServiceFinalRule {
 }
 ```
 
-**2.** Add a `.sentinel.yml` to your project root and point `rules` to the directory
-containing your rule files:
-
-```yaml
-rules:
-  - MyRules       # any directory — Sentinel scans all .swift files inside
-
-exclude:
-  - Tests
-  - Generated
-```
-
-**3.** Run `sentinel lint`:
+**2.** Run `sentinel lint`:
 
 ```
 Sources/NetworkService.swift:4:1: warning: [service-final] Service classes should be marked final.
 Sentinel: Found 0 error(s), 1 warning(s), 0 info(s)
 ```
+
+That's it. Sentinel automatically discovers all `@SentinelRule` files in your project —
+no `.sentinel.yml` required. Add one only when you need to customize `exclude` or `include` paths.
 
 ## Writing Rules
 
@@ -223,12 +212,15 @@ Declarations also expose computed properties: `isFinal`, `isPublic`, `isStatic`,
 
 ## Configuration
 
+Configuration is optional. By default Sentinel auto-discovers all `@SentinelRule` files in your
+project. Add a `.sentinel.yml` only when you need to customize behavior.
+
 ### `.sentinel.yml`
 
 ```yaml
-rules:
-  - SentinelRules/Sources       # directory of .swift rule files
-  - Rules/CustomRule.swift      # or individual files
+rules:                           # optional: explicit paths override auto-discovery
+  - SentinelRules/Sources        #   directory of .swift rule files
+  - Rules/CustomRule.swift       #   or individual files
 
 exclude:
   - Tests
@@ -238,6 +230,9 @@ exclude:
 include:                         # optional: analyze only these paths
   - Sources
 ```
+
+When `rules:` is omitted, Sentinel scans the project for files containing `@SentinelRule`
+(skipping `.build`, `DerivedData`, `.git`, `Pods`, `Carthage`, and configured `exclude` paths).
 
 ### Programmatic Usage
 
