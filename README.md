@@ -70,24 +70,9 @@ which pioneered the idea of writing Swift architectural tests as pure Swift code
 
 ## Quick Start
 
-### 1. Add a `.sentinel.yml` to your project root
+Sentinel needs two things: your rule files and a `.sentinel.yml` that tells it where they are.
 
-```yaml
-rules:
-  - SentinelRules/Sources
-
-exclude:
-  - Tests
-  - Generated
-```
-
-### 2. Create a rule file
-
-```
-mkdir -p SentinelRules/Sources
-```
-
-**`SentinelRules/Sources/ServiceFinalRule.swift`**
+**1.** Write a rule — a plain `.swift` file that imports `SentinelKit`:
 
 ```swift
 import SentinelKit
@@ -105,13 +90,19 @@ struct ServiceFinalRule: Rule {
 }
 ```
 
-### 3. Run
+**2.** Add a `.sentinel.yml` to your project root and point `rules` to the directory
+containing your rule files:
 
-```
-sentinel lint
+```yaml
+rules:
+  - MyRules       # any directory — Sentinel scans all .swift files inside
+
+exclude:
+  - Tests
+  - Generated
 ```
 
-Output (Xcode-compatible diagnostics):
+**3.** Run `sentinel lint`:
 
 ```
 Sources/NetworkService.swift:4:1: warning: [service-final] Service classes should be marked final.
