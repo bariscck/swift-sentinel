@@ -2,10 +2,8 @@ import SentinelKit
 
 /// Protocols should follow Swift naming conventions:
 /// - End with "Protocol", "able", "ible", "ing", "Type", or "Convertible" suffix
-struct ProtocolNamingRule: Rule {
-    let identifier = "protocol-naming"
-    let severity: Severity = .info
-
+@SentinelRule(.info, id: "protocol-naming")
+struct ProtocolNamingRule {
     private let validSuffixes = ["Protocol", "able", "ible", "ing", "Type", "Convertible"]
 
     func validate(using scope: SentinelScope) -> [Violation] {
