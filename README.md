@@ -309,7 +309,7 @@ compiler errors while writing rules:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/nicklama/sentinel", from: "0.2.0"),
+    .package(url: "https://github.com/bariscck/sentinel", from: "0.2.0"),
 ]
 ```
 
