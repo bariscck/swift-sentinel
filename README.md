@@ -48,6 +48,14 @@ them in YAML or regex is fragile and limited. With Sentinel, you express them as
 code with full IDE autocompletion, compiler checks, and the entire SwiftSyntax AST at your
 disposal.
 
+Sentinel's core architecture — the declaration model, SwiftSyntax-based collector, scope
+builder, and filter DSL — is heavily based on
+**[Harmonize](https://github.com/perrystreetsoftware/Harmonize)** by Perry Street Software.
+Harmonize pioneered the idea of writing Swift architectural tests as pure Swift code using
+SwiftSyntax. Sentinel builds on that foundation and extends it into a standalone linting tool
+with a CLI, config-based rule discovery, automatic compilation, and Xcode Build Phase
+integration.
+
 ## Table of Contents
 
   - [Quick Start](#quick-start)
@@ -60,6 +68,7 @@ disposal.
   - [Testing Rules](#testing-rules)
   - [API Reference](#api-reference)
   - [Installation](#installation)
+  - [Acknowledgments](#acknowledgments)
 
 ## Quick Start
 
@@ -896,6 +905,17 @@ Sentinel is under active development. Here's what to expect in the current state
   - [ ] Built-in rule library (common Swift/SwiftUI patterns)
   - [ ] Rule severity override in `.sentinel.yml`
   - [ ] Watch mode for continuous linting during development
+
+## Acknowledgments
+
+Sentinel is built on the shoulders of
+**[Harmonize](https://github.com/perrystreetsoftware/Harmonize)** by
+[Perry Street Software](https://github.com/perrystreetsoftware). The declaration model
+(classes, structs, functions, variables, etc.), the SwiftSyntax-based `DeclarationsCollector`,
+the scope builder pattern, and the rich filter/query DSL all originate from Harmonize's
+architecture. Sentinel adapts and extends these into a different context — a standalone CLI
+linter with config-driven rule discovery, automatic compilation, and Xcode diagnostic output —
+but the core analysis engine would not exist without the groundwork laid by the Harmonize team.
 
 ## License
 
