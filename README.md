@@ -107,10 +107,8 @@ Sentinel: Found 0 error(s), 1 warning(s), 0 info(s)
 
 ## Writing Rules
 
-### The `@SentinelRule` Macro
-
-The `@SentinelRule` macro is the recommended way to define rules. It synthesizes `Rule`
-conformance along with `identifier` and `severity` properties:
+Every rule is a struct annotated with `@SentinelRule`. The macro synthesizes `Rule` protocol
+conformance along with `identifier` and `severity` properties — you only write `validate`:
 
 ```swift
 @SentinelRule(.error, id: "viewmodel-main-actor")
@@ -121,35 +119,6 @@ struct ViewModelMainActorRule {
             $0.hasAttribute(named: "MainActor")
         }
     }
-}
-```
-
-This expands to:
-
-```swift
-struct ViewModelMainActorRule: Rule {
-    var identifier: String { "viewmodel-main-actor" }
-    var severity: Severity { .error }
-
-    func validate(using scope: SentinelScope) -> [Violation] {
-        expect("ViewModels should be annotated with @MainActor.",
-               for: scope.classes().withNameEndingWith("ViewModel")) {
-            $0.hasAttribute(named: "MainActor")
-        }
-    }
-}
-```
-
-### Manual Conformance
-
-You can also conform to `Rule` directly without the macro:
-
-```swift
-public protocol Rule: Sendable {
-    var identifier: String { get }
-    var severity: Severity { get }
-
-    func validate(using scope: SentinelScope) -> [Violation]
 }
 ```
 
