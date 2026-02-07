@@ -3,7 +3,6 @@ import Testing
 
 struct DummyRule: Rule {
     let identifier: String
-    let ruleDescription = "Dummy"
     let severity: Severity = .warning
 
     func validate(using scope: SentinelScope) -> [Violation] { [] }

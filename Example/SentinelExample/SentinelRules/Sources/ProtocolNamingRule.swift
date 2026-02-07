@@ -4,7 +4,6 @@ import SentinelKit
 /// - End with "Protocol", "able", "ible", "ing", "Type", or "Convertible" suffix
 struct ProtocolNamingRule: Rule {
     let identifier = "protocol-naming"
-    let ruleDescription = "Protocols should end with a descriptive suffix (e.g., Protocol, able, ible, ing)."
     let severity: Severity = .info
 
     private let validSuffixes = ["Protocol", "able", "ible", "ing", "Type", "Convertible"]

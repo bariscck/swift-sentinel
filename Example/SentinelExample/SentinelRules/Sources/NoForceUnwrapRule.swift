@@ -4,7 +4,6 @@ import SentinelKit
 /// Use proper optionals or default values instead.
 struct NoForceUnwrapRule: Rule {
     let identifier = "no-force-unwrap"
-    let ruleDescription = "Avoid implicitly unwrapped optionals."
     let severity: Severity = .warning
 
     func validate(using scope: SentinelScope) -> [Violation] {

@@ -5,11 +5,11 @@ import Testing
 
 struct MainActorViewModelRule: Rule {
     let identifier = "viewmodel-main-actor"
-    let ruleDescription = "ViewModels should be annotated with @MainActor."
     let severity: Severity = .error
 
     func validate(using scope: SentinelScope) -> [Violation] {
-        expect(for: scope.classes().withNameEndingWith("ViewModel")) {
+        expect("ViewModels should be annotated with @MainActor.",
+               for: scope.classes().withNameEndingWith("ViewModel")) {
             $0.hasAttribute(named: "MainActor")
         }
     }
@@ -17,11 +17,11 @@ struct MainActorViewModelRule: Rule {
 
 struct ViewModelInheritanceRule: Rule {
     let identifier = "viewmodel-inherits-base"
-    let ruleDescription = "ViewModels must inherit from BaseViewModel."
     let severity: Severity = .warning
 
     func validate(using scope: SentinelScope) -> [Violation] {
-        expect(for: scope.classes().withNameEndingWith("ViewModel")) {
+        expect("ViewModels must inherit from BaseViewModel.",
+               for: scope.classes().withNameEndingWith("ViewModel")) {
             $0.inherits(from: "BaseViewModel")
         }
     }

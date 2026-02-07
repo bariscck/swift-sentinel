@@ -45,7 +45,7 @@ struct InitCommand: ParsableCommand {
             import SentinelKit
 
             /// Example rule: ViewModels should be annotated with @MainActor.
-            @SentinelRule(.error, id: "viewmodel-main-actor", description: "ViewModels should be annotated with @MainActor.")
+            @SentinelRule(.error, id: "viewmodel-main-actor")
             struct ViewModelMainActorRule {
                 func validate(using scope: SentinelScope) -> [Violation] {
                     expect("ViewModels should be annotated with @MainActor.",

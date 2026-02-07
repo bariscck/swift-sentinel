@@ -5,9 +5,6 @@ public protocol Rule: Sendable {
     /// Unique identifier for this rule (e.g., "viewmodel-main-actor").
     var identifier: String { get }
 
-    /// Human-readable description of what this rule checks.
-    var ruleDescription: String { get }
-
     /// Severity level for violations produced by this rule.
     var severity: Severity { get }
 

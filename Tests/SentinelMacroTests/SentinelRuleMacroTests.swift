@@ -32,8 +32,6 @@ private let testMacros: [String: Macro.Type] = [
             var identifier: String { "service_final" }
 
             var severity: Severity { .warning }
-
-            var ruleDescription: String { "Service Final" }
         }
 
         extension ServiceFinalRule: Rule {
@@ -49,7 +47,8 @@ private let testMacros: [String: Macro.Type] = [
         @SentinelRule(.error, id: "viewmodel-main-actor")
         struct ViewModelMainActorRule {
             func validate(using scope: SentinelScope) -> [Violation] {
-                expect(for: scope.classes().withNameEndingWith("ViewModel")) {
+                expect("ViewModels should be annotated with @MainActor.",
+                       for: scope.classes().withNameEndingWith("ViewModel")) {
                     $0.hasAttribute(named: "MainActor")
                 }
             }
@@ -58,7 +57,8 @@ private let testMacros: [String: Macro.Type] = [
         expandedSource: """
         struct ViewModelMainActorRule {
             func validate(using scope: SentinelScope) -> [Violation] {
-                expect(for: scope.classes().withNameEndingWith("ViewModel")) {
+                expect("ViewModels should be annotated with @MainActor.",
+                       for: scope.classes().withNameEndingWith("ViewModel")) {
                     $0.hasAttribute(named: "MainActor")
                 }
             }
@@ -66,42 +66,6 @@ private let testMacros: [String: Macro.Type] = [
             var identifier: String { "viewmodel-main-actor" }
 
             var severity: Severity { .error }
-
-            var ruleDescription: String { "Viewmodel Main Actor" }
-        }
-
-        extension ViewModelMainActorRule: Rule {
-        }
-        """,
-        macros: testMacros
-    )
-}
-
-@Test func expandsWithCustomDescription() {
-    assertMacroExpansion(
-        """
-        @SentinelRule(.error, id: "viewmodel-main-actor", description: "ViewModels should be annotated with @MainActor.")
-        struct ViewModelMainActorRule {
-            func validate(using scope: SentinelScope) -> [Violation] {
-                expect(for: scope.classes().withNameEndingWith("ViewModel")) {
-                    $0.hasAttribute(named: "MainActor")
-                }
-            }
-        }
-        """,
-        expandedSource: """
-        struct ViewModelMainActorRule {
-            func validate(using scope: SentinelScope) -> [Violation] {
-                expect(for: scope.classes().withNameEndingWith("ViewModel")) {
-                    $0.hasAttribute(named: "MainActor")
-                }
-            }
-
-            var identifier: String { "viewmodel-main-actor" }
-
-            var severity: Severity { .error }
-
-            var ruleDescription: String { "ViewModels should be annotated with @MainActor." }
         }
 
         extension ViewModelMainActorRule: Rule {
@@ -130,8 +94,6 @@ private let testMacros: [String: Macro.Type] = [
             var identifier: String { "protocol_naming" }
 
             var severity: Severity { .info }
-
-            var ruleDescription: String { "Protocol Naming" }
         }
 
         extension ProtocolNamingRule: Rule {
@@ -160,8 +122,6 @@ private let testMacros: [String: Macro.Type] = [
             var identifier: String { "service_final" }
 
             var severity: Severity { .warning }
-
-            var ruleDescription: String { "Service Final" }
         }
         """,
         macros: testMacros

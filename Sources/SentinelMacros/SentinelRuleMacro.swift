@@ -72,31 +72,10 @@ public struct SentinelRuleMacro: MemberMacro, ExtensionMacro {
 
         let idValue = idLiteral.segments.trimmedDescription
 
-        // Optional third argument: description (labeled "description")
-        let descriptionValue: String
-        if argList.count >= 3,
-           argList[2].label?.trimmedDescription == "description",
-           let descLiteral = argList[2].expression.as(StringLiteralExprSyntax.self) {
-            descriptionValue = descLiteral.segments.trimmedDescription
-        } else {
-            descriptionValue = humanReadable(from: idValue)
-        }
-
         return [
             "var identifier: String { \(literal: idValue) }",
             "var severity: Severity { \(raw: severityExpr) }",
-            "var ruleDescription: String { \(literal: descriptionValue) }",
         ]
-    }
-
-    private static func humanReadable(from id: String) -> String {
-        id.split(whereSeparator: { $0 == "_" || $0 == "-" })
-            .map { word in
-                var w = String(word)
-                let first = w.removeFirst()
-                return String(first).uppercased() + w
-            }
-            .joined(separator: " ")
     }
 }
 

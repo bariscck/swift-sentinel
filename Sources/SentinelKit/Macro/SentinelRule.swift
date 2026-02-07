@@ -1,4 +1,4 @@
-/// Automatically synthesizes `Rule` conformance along with `identifier`, `severity`, and `ruleDescription` properties.
+/// Automatically synthesizes `Rule` conformance along with `identifier` and `severity` properties.
 ///
 /// Usage:
 /// ```swift
@@ -12,16 +12,9 @@
 ///     }
 /// }
 /// ```
-///
-/// You can also provide a custom description:
-/// ```swift
-/// @SentinelRule(.error, id: "viewmodel-main-actor", description: "ViewModels should be annotated with @MainActor.")
-/// struct ViewModelMainActorRule { ... }
-/// ```
-@attached(member, names: named(identifier), named(severity), named(ruleDescription))
+@attached(member, names: named(identifier), named(severity))
 @attached(extension, conformances: Rule)
 public macro SentinelRule(
     _ severity: Severity,
-    id: String,
-    description: String? = nil
+    id: String
 ) = #externalMacro(module: "SentinelMacros", type: "SentinelRuleMacro")

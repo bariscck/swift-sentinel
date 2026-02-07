@@ -5,13 +5,13 @@ extension Rule {
     /// Creates a violation for a specific named declaration.
     public func violation<T: SourceCodeProviding & NamedDeclaration & SyntaxNodeProviding>(
         on declaration: T,
-        message: String? = nil
+        message: String
     ) -> Violation {
         let location = declaration.sourceCodeLocation
         let pos = location.position(of: declaration.node)
         return Violation(
             ruleIdentifier: identifier,
-            message: message ?? ruleDescription,
+            message: message,
             severity: severity,
             filePath: location.filePath,
             line: pos.line,
@@ -21,7 +21,7 @@ extension Rule {
 
     /// Shorthand expect: returns violations for declarations failing the predicate.
     public func expect<T: SourceCodeProviding & NamedDeclaration & SyntaxNodeProviding>(
-        _ message: String? = nil,
+        _ message: String,
         for declarations: [T],
         _ predicate: (T) -> Bool
     ) -> [Violation] {
