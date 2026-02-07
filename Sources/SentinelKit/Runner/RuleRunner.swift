@@ -10,10 +10,11 @@ public struct RuleRunner: Sendable {
         self.scope = scope
     }
 
-    /// Run all rules and return all violations.
+    /// Run all rules and return all violations, filtering out those suppressed by inline directives.
     public func run() -> [Violation] {
-        rules.flatMap { rule in
+        let violations = rules.flatMap { rule in
             rule.validate(using: scope)
         }
+        return DirectiveFilter.filter(violations: violations, sourceCode: scope.sourceCode)
     }
 }
