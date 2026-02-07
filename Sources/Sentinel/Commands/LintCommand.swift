@@ -26,17 +26,13 @@ struct LintCommand: ParsableCommand {
             configPath = (projectPath as NSString).appendingPathComponent(config)
         }
 
-        // Parse config — use defaults if file doesn't exist
+        // Parse config
         let sentinelConfig: SentinelConfig
-        if FileManager.default.fileExists(atPath: configPath) {
-            do {
-                sentinelConfig = try ConfigParser.parse(at: configPath)
-            } catch {
-                print("Sentinel: \(error)")
-                throw ExitCode.failure
-            }
-        } else {
-            sentinelConfig = SentinelConfig()
+        do {
+            sentinelConfig = try ConfigParser.parse(at: configPath)
+        } catch {
+            print("Sentinel: \(error)")
+            throw ExitCode.failure
         }
 
         // Resolve Sentinel package path

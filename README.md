@@ -91,8 +91,7 @@ Sources/NetworkService.swift:4:1: warning: [service-final] Service classes shoul
 Sentinel: Found 0 error(s), 1 warning(s), 0 info(s)
 ```
 
-That's it. Sentinel automatically discovers all `@SentinelRule` files in your project —
-no `.sentinel.yml` required. Add one only when you need to customize `exclude` or `include` paths.
+That's it. Sentinel discovers your rules from paths configured in `.sentinel.yml`.
 
 ## Writing Rules
 
@@ -212,13 +211,12 @@ Declarations also expose computed properties: `isFinal`, `isPublic`, `isStatic`,
 
 ## Configuration
 
-Configuration is optional. By default Sentinel auto-discovers all `@SentinelRule` files in your
-project. Add a `.sentinel.yml` only when you need to customize behavior.
+Add a `.sentinel.yml` to your project root to configure rule paths, exclusions, and inclusions.
 
 ### `.sentinel.yml`
 
 ```yaml
-rules:                           # optional: explicit paths override auto-discovery
+rules:                           # paths to rule files or directories
   - SentinelRules/Sources        #   directory of .swift rule files
   - Rules/CustomRule.swift       #   or individual files
 
@@ -230,9 +228,6 @@ exclude:
 include:                         # optional: analyze only these paths
   - Sources
 ```
-
-When `rules:` is omitted, Sentinel scans the project for files containing `@SentinelRule`
-(skipping `.build`, `DerivedData`, `.git`, `Pods`, `Carthage`, and configured `exclude` paths).
 
 ### Programmatic Usage
 

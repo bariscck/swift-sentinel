@@ -12,7 +12,7 @@ struct CompileAndRun {
         var description: String {
             switch self {
             case .noRuleFiles:
-                return "No rule files found. Add @SentinelRule rules to your project or specify paths under 'rules:' in .sentinel.yml."
+                return "No rule files found. Specify paths under 'rules:' in .sentinel.yml."
             case .noRuleTypes:
                 return "No Rule-conforming types found in rule files. Annotate your rules with @SentinelRule."
             case .executionFailed(let code):
@@ -34,13 +34,8 @@ struct CompileAndRun {
         projectPath: String,
         sentinelPackagePath: String
     ) throws {
-        // 1. Collect rule Swift files — explicit paths or auto-discovery
-        let ruleFiles: [URL]
-        if config.rules.isEmpty {
-            ruleFiles = RuleDiscovery.findRuleFiles(in: projectPath, excluding: config.exclude)
-        } else {
-            ruleFiles = collectRuleFiles(paths: config.rules, baseDir: configDir)
-        }
+        // 1. Collect rule Swift files from configured paths
+        let ruleFiles = collectRuleFiles(paths: config.rules, baseDir: configDir)
 
         guard !ruleFiles.isEmpty else {
             throw PipelineError.noRuleFiles

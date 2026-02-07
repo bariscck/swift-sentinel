@@ -26,40 +26,6 @@ struct RuleDiscovery {
         return visitor.ruleTypeNames
     }
 
-    /// Scan a directory for Swift files containing `@SentinelRule`.
-    static func findRuleFiles(in directory: String, excluding: [String] = []) -> [URL] {
-        let fileManager = FileManager.default
-        let directoryURL = URL(fileURLWithPath: directory)
-
-        let skipDirs = Set(excluding + [".build", "DerivedData", ".git", "Pods", "Carthage"])
-
-        guard let enumerator = fileManager.enumerator(
-            at: directoryURL,
-            includingPropertiesForKeys: [.isRegularFileKey, .isDirectoryKey],
-            options: [.skipsHiddenFiles]
-        ) else {
-            return []
-        }
-
-        var ruleFiles: [URL] = []
-
-        for case let fileURL as URL in enumerator {
-            // Skip excluded directories
-            if skipDirs.contains(fileURL.lastPathComponent) {
-                enumerator.skipDescendants()
-                continue
-            }
-
-            guard fileURL.pathExtension == "swift" else { continue }
-
-            if let content = try? String(contentsOf: fileURL, encoding: .utf8),
-               content.contains("@SentinelRule") {
-                ruleFiles.append(fileURL)
-            }
-        }
-
-        return ruleFiles
-    }
 }
 
 /// SyntaxVisitor that finds struct/class declarations conforming to `Rule`
