@@ -39,6 +39,7 @@ That's a complete, working lint rule. No YAML. No regex. Just Swift.
   - [Writing Rules](#writing-rules)
   - [Querying Declarations](#querying-declarations)
   - [Configuration](#configuration)
+  - [Inline Rule Suppression](#inline-rule-suppression)
   - [CLI Usage](#cli-usage)
   - [Xcode Integration](#xcode-integration)
   - [Writing Rules in Your Project](#writing-rules-in-your-project)
@@ -245,6 +246,69 @@ let scope = Sentinel.on(source: """
 let scope = Sentinel.productionCode(path: "/path/to/project")
 ```
 
+## Inline Rule Suppression
+
+You can suppress specific rules at the file or line level using inline comments — similar to
+SwiftLint's `swiftlint:disable` directives.
+
+### Disable a Rule for the Rest of the File
+
+```swift
+// sentinel:disable service-final
+
+class NetworkService { }   // no violation
+class CacheService { }     // no violation
+```
+
+### Re-enable a Disabled Rule
+
+```swift
+// sentinel:disable service-final
+class NetworkService { }   // no violation
+
+// sentinel:enable service-final
+class CacheService { }     // violation reported
+```
+
+### Disable for the Next Line Only
+
+```swift
+// sentinel:disable:next no-force-unwrap
+var name: String! = nil    // no violation
+
+var age: Int! = nil        // violation reported
+```
+
+### Disable for the Current Line
+
+```swift
+class MyViewModel {} // sentinel:disable:this viewmodel-main-actor
+```
+
+### Disable All Rules
+
+Use `all` instead of a rule identifier to suppress every rule:
+
+```swift
+// sentinel:disable all
+class Legacy {
+    var data: String! = nil
+}
+// sentinel:enable all
+```
+
+### Reference
+
+| Directive | Scope |
+|---|---|
+| `// sentinel:disable <rule-id>` | From this line to end of file (or until re-enabled) |
+| `// sentinel:enable <rule-id>` | Re-enables a previously disabled rule |
+| `// sentinel:disable:next <rule-id>` | Next line only |
+| `// sentinel:disable:this <rule-id>` | Current line only |
+
+> [!TIP]
+> The `<rule-id>` must match the `id` parameter from `@SentinelRule(.warning, id: "service-final")`.
+
 ## CLI Usage
 
 ### `sentinel lint`
@@ -428,6 +492,7 @@ swift build
 
 ## Roadmap
 
+  - [x] Inline rule suppression (`sentinel:disable` / `sentinel:enable` directives)
   - [ ] Pre-built binary distribution (Homebrew, Mint, GitHub Releases)
   - [ ] SPM Build Tool Plugin support
   - [ ] `--fix` mode for auto-correctable rules
