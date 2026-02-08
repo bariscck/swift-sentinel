@@ -1,6 +1,6 @@
 # Sentinel
 
-**Compile-time Swift linting where rules are written in pure Swift.**
+**Compile-time linting for Swift projects with custom rules powered by SwiftSyntax — no YAML, no regex, just Swift.**
 
 [![Swift 6.2](https://img.shields.io/badge/Swift-6.2-orange.svg)](https://swift.org)
 [![macOS 13+](https://img.shields.io/badge/macOS-13%2B-blue.svg)](https://developer.apple.com/macos/)
