@@ -10,7 +10,8 @@ public enum SentinelRunner {
     ) {
         let scope = SentinelScopeBuilder(
             path: configuration.projectPath,
-            excludes: configuration.excludePaths
+            excludes: configuration.excludePaths,
+            changedFiles: configuration.changedFiles
         )
 
         let runner = RuleRunner(rules: rules, scope: scope)

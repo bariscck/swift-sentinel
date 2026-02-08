@@ -16,6 +16,12 @@ struct LintCommand: ParsableCommand {
     @Option(name: .long, help: "Path to the Sentinel package (auto-detected if omitted).")
     var sentinelPath: String?
 
+    @Flag(name: .long, help: "Only lint files changed in git (staged, unstaged, and untracked).")
+    var changedOnly: Bool = false
+
+    @Option(name: .long, help: "Base branch to diff against when using --changed-only (e.g. main).")
+    var baseBranch: String?
+
     func run() throws {
         let projectPath = (path as NSString).standardizingPath
         let configPath: String
@@ -46,13 +52,35 @@ struct LintCommand: ParsableCommand {
         // Determine config directory for resolving relative paths
         let configDir = (configPath as NSString).deletingLastPathComponent
 
+        // Resolve changed files if selective lint is requested
+        var changedFiles: [String] = []
+        if changedOnly {
+            do {
+                changedFiles = try GitDiffFilesFinder.changedSwiftFiles(
+                    in: projectPath,
+                    baseBranch: baseBranch
+                )
+            } catch {
+                print("Sentinel: \(error)")
+                throw ExitCode.failure
+            }
+
+            if changedFiles.isEmpty {
+                print("Sentinel: No changed Swift files found. Nothing to lint.")
+                return
+            }
+
+            print("Sentinel: Linting \(changedFiles.count) changed file(s)")
+        }
+
         // Run pipeline
         do {
             try CompileAndRun.run(
                 config: sentinelConfig,
                 configDir: configDir,
                 projectPath: projectPath,
-                sentinelPackagePath: resolvedSentinelPath
+                sentinelPackagePath: resolvedSentinelPath,
+                changedFiles: changedFiles
             )
         } catch {
             print("Sentinel: \(error)")
