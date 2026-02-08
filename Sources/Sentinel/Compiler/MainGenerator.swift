@@ -10,12 +10,14 @@ struct MainGenerator {
     ///   - projectPath: Absolute path to the project being analyzed.
     ///   - excludePaths: Paths to exclude from analysis.
     ///   - includePaths: Paths to include in analysis.
+    ///   - changedFiles: Absolute paths of changed files to restrict analysis to.
     /// - Returns: Generated Swift source code string.
     static func generate(
         ruleTypeNames: [String],
         projectPath: String,
         excludePaths: [String],
-        includePaths: [String]
+        includePaths: [String],
+        changedFiles: [String] = []
     ) -> String {
         let ruleInstances = ruleTypeNames
             .map { "    \($0)()," }
@@ -27,6 +29,10 @@ struct MainGenerator {
 
         let includeArray = includePaths
             .map { "\"\($0)\"" }
+            .joined(separator: ", ")
+
+        let changedFilesArray = changedFiles
+            .map { "\"\($0.replacingOccurrences(of: "\"", with: "\\\""))\"" }
             .joined(separator: ", ")
 
         return """
@@ -42,7 +48,8 @@ struct MainGenerator {
             configuration: Configuration(
                 projectPath: \"\(projectPath.replacingOccurrences(of: "\"", with: "\\\""))\",
                 includePaths: [\(includeArray)],
-                excludePaths: [\(excludeArray)]
+                excludePaths: [\(excludeArray)],
+                changedFiles: [\(changedFilesArray)]
             )
         )
         """

@@ -28,11 +28,13 @@ struct CompileAndRun {
     ///   - configDir: Directory containing the config file (for resolving relative paths).
     ///   - projectPath: Absolute path to the project being analyzed.
     ///   - sentinelPackagePath: Path to the root Sentinel SPM package.
+    ///   - changedFiles: When non-empty, restricts analysis to only these file paths (absolute).
     static func run(
         config: SentinelConfig,
         configDir: String,
         projectPath: String,
-        sentinelPackagePath: String
+        sentinelPackagePath: String,
+        changedFiles: [String] = []
     ) throws {
         // 1. Collect rule Swift files from configured paths
         let ruleFiles = collectRuleFiles(paths: config.rules, baseDir: configDir)
@@ -53,7 +55,8 @@ struct CompileAndRun {
             ruleTypeNames: ruleTypeNames,
             projectPath: projectPath,
             excludePaths: config.exclude,
-            includePaths: config.include
+            includePaths: config.include,
+            changedFiles: changedFiles
         )
 
         // 4. Compile via temporary SPM package
