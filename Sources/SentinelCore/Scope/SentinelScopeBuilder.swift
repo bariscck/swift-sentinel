@@ -21,7 +21,7 @@ public final class SentinelScopeBuilder: SentinelScope, On, Excluding, @unchecke
         self.folder = folder
         self.includePatterns = includes
         self.excludePatterns = excludes
-        self.changedFiles = Set(changedFiles)
+        self.changedFiles = Set(changedFiles.map { URL(fileURLWithPath: $0).standardized.resolvingSymlinksInPath().path })
     }
 
     // MARK: - Builder Methods
@@ -59,7 +59,7 @@ public final class SentinelScopeBuilder: SentinelScope, On, Excluding, @unchecke
 
         // When changedFiles is non-empty, restrict to only those files
         if !changedFiles.isEmpty {
-            files = files.filter { changedFiles.contains($0.path) }
+            files = files.filter { changedFiles.contains($0.resolvingSymlinksInPath().path) }
         }
 
         let sources = files.compactMap { SwiftSourceCode.from(url: $0) }
