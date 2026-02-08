@@ -40,6 +40,7 @@ That's a complete, working lint rule. No YAML. No regex. Just Swift.
   - [Querying Declarations](#querying-declarations)
   - [Configuration](#configuration)
   - [Inline Rule Suppression](#inline-rule-suppression)
+  - [Selective Linting](#selective-linting)
   - [CLI Usage](#cli-usage)
   - [Xcode Integration](#xcode-integration)
   - [Writing Rules in Your Project](#writing-rules-in-your-project)
@@ -309,6 +310,46 @@ class Legacy {
 > [!TIP]
 > The `<rule-id>` must match the `id` parameter from `@SentinelRule(.warning, id: "service-final")`.
 
+## Selective Linting
+
+Sentinel can lint only files that have changed in git, significantly speeding up iteration on large
+projects. Use the `--changed-only` flag to restrict analysis to modified files.
+
+### Lint Uncommitted Changes
+
+Checks staged, unstaged, and untracked Swift files:
+
+```bash
+sentinel lint --changed-only
+```
+
+### Lint Changes Against a Branch
+
+Compare against a base branch to lint all files changed in a feature branch:
+
+```bash
+sentinel lint --changed-only --base-branch main
+```
+
+This is especially useful in CI pipelines to lint only the diff introduced by a pull request.
+
+### How It Works
+
+| Mode | What gets linted |
+|---|---|
+| `--changed-only` (no base branch) | Staged + unstaged + untracked `.swift` files |
+| `--changed-only --base-branch main` | All `.swift` files changed between `main` and `HEAD` |
+
+When no changed Swift files are detected, Sentinel exits early with a message:
+
+```
+Sentinel: No changed Swift files found. Nothing to lint.
+```
+
+> [!TIP]
+> Combine `--changed-only` with a git pre-commit hook for fast feedback — only the files you
+> touched get linted, keeping the hook near-instant.
+
 ## CLI Usage
 
 ### `sentinel lint`
@@ -320,6 +361,8 @@ OPTIONS:
   -c, --config <path>          Path to config file (default: .sentinel.yml)
   -p, --path <path>            Path to project directory (default: cwd)
       --sentinel-path <path>   Path to Sentinel package (auto-detected)
+      --changed-only           Only lint files changed in git
+      --base-branch <branch>   Base branch to diff against (used with --changed-only)
 ```
 
 ### `sentinel init`
@@ -368,6 +411,9 @@ Once Sentinel is distributed as a pre-built binary, the script simplifies to:
 ```bash
 sentinel lint --path "$SRCROOT"
 ```
+
+You can also add `--changed-only` to the build phase script to speed up incremental builds by
+linting only modified files.
 </details>
 
 ## Writing Rules in Your Project
@@ -493,6 +539,7 @@ swift build
 ## Roadmap
 
   - [x] Inline rule suppression (`sentinel:disable` / `sentinel:enable` directives)
+  - [x] Selective linting (`--changed-only` for git-aware incremental lints)
   - [ ] Pre-built binary distribution (Homebrew, Mint, GitHub Releases)
   - [ ] SPM Build Tool Plugin support
   - [ ] `--fix` mode for auto-correctable rules
